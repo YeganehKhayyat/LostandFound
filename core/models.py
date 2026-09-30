@@ -2,10 +2,13 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
-
 class Category(models.Model):
+    
     title = models.CharField(max_length=200)
-
+        
+    def __str__(self):
+        return self.title
+    
 class Item(models.Model):
     
     class Status(models.TextChoices):
@@ -18,27 +21,44 @@ class Item(models.Model):
     description = models.TextField()
     location = models.CharField(max_length=200)
     event_date = models.DateField()
-    create_at = models.DateTimeField(auto_now_add= True)
-    category = models.ForeignKey(Category, on_delete=models.PROTECT)
+    created_at = models.DateTimeField(auto_now_add= True)
+    category = models.ForeignKey(
+                                 Category,
+                                 on_delete=models.PROTECT,
+                                 related_name='items_category'
+                                 )
     # pending / active / done / disable
-    status = models.CharField(max_length = 20, 
+    status = models.CharField(
+                              max_length = 20, 
                               choices = Status.choices,
                               default=Status.OPEN
                               )
     
-    created_by = models.ForeignKey(User,
+    created_by = models.ForeignKey(
+                                   User,
                                    on_delete =models.CASCADE,
-                                   related_name="items"
+                                   related_name="items_user"
                                    )
     
+    def __str__(self):
+            return f"{self.title} | {self.status}"
 class Claim(models.Model):
     class Status(models.TextChoices):
         PENDING= "pending" , "در حال بررسی"
         APPROVED= "approved", "تاییده شده"
         REJECTED= "rejected", "رد شده"
     
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    claimant = models.ForeignKey(User, on_delete=models.CASCADE)
+    item = models.ForeignKey(
+        Item,
+        on_delete=models.CASCADE,
+        related_name = 'claim_item'
+        )
+    
+    claimant = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name = 'claim_user'
+        )
     proof_text = models.TextField(help_text="چیزی بنویسید که مالکیت شما را اثبات کند.")
     status = models.CharField(max_length=20, choices=Status.choices, default= Status.PENDING)
     created_at = models.DateTimeField(auto_now_add=True)
