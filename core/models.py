@@ -1,6 +1,6 @@
 from django.db import models
-from config import settings
 from django.contrib.auth.models import User
+
 # Create your models here.
 
 class Category(models.Model):
@@ -38,7 +38,7 @@ class Claim(models.Model):
         REJECTED= "rejected", "رد شده"
     
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    claimant = models.ForeignKey(User, on_delete=models.CASCADE, related_name="claims")
+    claimant = models.ForeignKey(User, on_delete=models.CASCADE)
     proof_text = models.TextField(help_text="چیزی بنویسید که مالکیت شما را اثبات کند.")
     status = models.CharField(max_length=20, choices=Status.choices, default= Status.PENDING)
     created_at = models.DateTimeField(auto_now_add=True)
