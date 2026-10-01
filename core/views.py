@@ -23,10 +23,15 @@ def create_item(requests):
             item = form.save(commit=False)
             item.created_by = requests.user
             item.save()
-            return redirect("item_detail")
+            return redirect('list_item')
             
         else:
-            ...
+            form = ItemForm()
+            return render(
+                requests,
+                "items/create.html",
+                {'form' : form}
+            )
             
     else:
         form = ItemForm()
