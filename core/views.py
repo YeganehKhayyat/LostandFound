@@ -6,6 +6,19 @@ from django.db.models import Count
 from django.db import models
 # Create your views here.
 
+def list_items(requests):
+    '''
+    SELECT * 
+    FROM TABLE_NAME
+    '''
+    
+    items = Item.objects.all()
+    return render(
+        requests,
+        "items/item_list.html",
+        context={'items' : items}
+    )
+
 def create_item(requests):
     
     if requests.method == "POST":
@@ -13,23 +26,13 @@ def create_item(requests):
         # title = '1100', description = 'i found it', ...
         form = ItemForm(requests.POST)
         if form.is_valid():
-            title = form.cleaned_data.get("title")
-            category = form.cleaned_data.get("category")
-            event_date = form.cleaned_data.get("event_date")
-            
-            print(f"{title}")
-            print(f"{category}")
-            print(f"{event_date}")
-            print("*" * 10)
-            print(requests.POST)
             
             item = form.save(commit=False)
             item.created_by = requests.user
-            item.save()
-            return redirect('list_item')
+            form.save()
+            return redirect('report')
             
         else:
-            form = ItemForm()
             return render(
                 requests,
                 "items/create.html",
@@ -44,20 +47,7 @@ def create_item(requests):
         "items/create.html" ,
         context= {'form' : form}
         )
-    
-def list_items(requests):
-    '''
-    SELECT * 
-    FROM TABLE_NAME
-    '''
-    
-    items = Item.objects.all()
-    return render(
-        requests,
-        "items/item_list.html",
-        context={'items' : items}
-    )
-    
+      
 def item_detail(requests, pk):
 
     item = get_object_or_404(
@@ -123,7 +113,7 @@ def report(requests):
     
     item = Item.objects.filter(
         created_by = requests.user
-    ).order_by('title')
+    ).order_by('-event_date')
     
     state = item.aggregate(
         opened = Count('id' , filter=models.Q(status='open')),
