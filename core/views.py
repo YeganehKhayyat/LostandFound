@@ -1,6 +1,9 @@
 from django.shortcuts import render, redirect ,get_object_or_404
 from core.forms import ItemForm
 from core.models import Item
+from django.contrib.auth.decorators import login_required
+from django.db.models import Count
+from django.db import models
 # Create your views here.
 
 def create_item(requests):
@@ -113,4 +116,24 @@ def delete_item(requests, pk):
         requests,
         "items/confirm_delete.html",
         {'item' : item}
+    )
+    
+@login_required(login_url='/admin')
+def report(requests):
+    
+    item = Item.objects.filter(
+        created_by = requests.user
+    ).order_by('title')
+    
+    state = item.aggregate(
+        opened = Count('id' , filter=models.Q(status='open')),
+        closed = Count('id' , filter=models.Q(status = 'closed'))
+    )
+    return render(
+        requests,
+        "items/report.html",
+        {
+         'item' : item,
+         'state' : state
+         }
     )
