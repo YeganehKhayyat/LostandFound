@@ -42,6 +42,7 @@ class Item(models.Model):
     
     def __str__(self):
             return f"{self.title} | {self.status}"
+        
 class Claim(models.Model):
     class Status(models.TextChoices):
         PENDING= "pending" , "در حال بررسی"

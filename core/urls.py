@@ -23,6 +23,8 @@ from core.views import (
                         delete_item
                         )
 
+app_name = 'core'
+
 urlpatterns = [
     path("create/" ,create_item , name = 'create_item'),
     path("list/" ,list_items , name='list_item'),
