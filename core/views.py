@@ -4,6 +4,8 @@ from core.models import Item
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.db import models
+from django.contrib import messages
+from django.urls import reverse
 # Create your views here.
 
 def list_items(requests):
@@ -29,15 +31,21 @@ def create_item(requests):
             
             item = form.save(commit=False)
             item.created_by = requests.user
-            form.save()
-            return redirect('report')
+            item.save()
+            messages.success(
+                requests,
+                "آیتم با موفقیت ایجاد شد."
+            )
+            
+            return redirect(
+                'item_detail',
+                pk=item.id
+            )
             
         else:
-            return render(
-                requests,
-                "items/create.html",
-                {'form' : form}
-            )
+            print(form.errors)
+            # print("*"  * 10)
+            # print(form.non_field_errors)
             
     else:
         form = ItemForm()
@@ -47,22 +55,22 @@ def create_item(requests):
         "items/create.html" ,
         context= {'form' : form}
         )
-      
+    
+@login_required    
 def item_detail(requests, pk):
 
     item = get_object_or_404(
         Item,
-        id=pk,
-        created_by = requests.user
+        id=pk
         )
-    
     
     return render(
         requests,
         "items/item_detail.html",
-        context= {'item' : item}
+        {'item' : item}
     )
     
+@login_required
 def update_item(requests, pk):
     item  = get_object_or_404(
                 Item,
@@ -73,7 +81,9 @@ def update_item(requests, pk):
     if requests.method == "POST":
          form = ItemForm(
              requests.POST,
-             instance=item)
+             instance=item
+             )
+         
          if form.is_valid():
              form.save()
              return redirect(
@@ -90,7 +100,8 @@ def update_item(requests, pk):
         "items/update.html" ,
         context= {'form' : form}
         )
-    
+
+@login_required  
 def delete_item(requests, pk):
     item  = get_object_or_404(
                     Item,
