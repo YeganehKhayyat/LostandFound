@@ -1,14 +1,14 @@
 <h1>Report page</h1>
 {%if state.count == 0%}
-    <a href="{% url 'core:create_item' %}">Submit Item</a>
+    <a href="{% url 'create_item' %}">Submit Item</a>
 {%endif%}
 <h3>Total submitted Items:  {{item.count}} </h3>
 <h3> Total Open status Item : {{state.opened}} </h3>
 <h3>Total closed status Item: {{state.closed}} </h3>
 {% for i in item %}
     <p> {{i.title}}  &nbsp; | &nbsp; {{i.status}} </p>
-    <a href="{% url 'core:update_item' i.pk%} "> Edit</a> &nbsp;
-    <a href="{% url 'core:delete_item' i.pk%} "> Delete</a>
+    <a href="{% url 'update_item' i.pk%} "> Edit</a> &nbsp;
+    <a href="{% url 'delete_item' i.pk%} "> Delete</a>
     <hr>
 {% endfor %}
 <br><br>
