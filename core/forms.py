@@ -40,7 +40,14 @@ class ItemForm(ModelForm):
         except ValueError as e:
             raise forms.ValidationError(str(e))
         
-    
+    def clean_location(self):
+        location = self.cleaned_data.get('location')
+        
+        try:
+            return BusinuessRule.description_check(location)
+        except ValueError as e:
+            return forms.ValidationError(str(e))
+        
     def clean(self):
         cleaned_data = super().clean()
         status = cleaned_data.get("status")
