@@ -46,6 +46,7 @@ class BusinuessRule:
             return description
         
     def location_check(location):
+        
             with open(file_path3 , "r"  , encoding="utf-8") as f3:
                 data3 = json.load(f3)
                 for i in data3["valid_location"]:
