@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.db import models
 from django.contrib import messages
-from django.urls import reverse
+from core.services import BusinuessRule
 # Create your views here.
 
 def list_items(requests):
@@ -15,10 +15,20 @@ def list_items(requests):
     '''
     
     items = Item.objects.all()
+    selected_date = requests.GET.get("created_at")
+    
+    if selected_date:
+        items = items.filter(created_at__date= selected_date)
+        
+    print(selected_date)
+    
     return render(
         requests,
         "items/item_list.html",
-        context={'items' : items}
+        context={
+            'items' : items ,
+            'date' : selected_date
+            }
     )
 
 def create_item(requests):
@@ -34,7 +44,7 @@ def create_item(requests):
             item.save()
             messages.success(
                 requests,
-                "آیتم با موفقیت ایجاد شد."
+                f"آیتم {item.title} با موفقیت ایجاد شد."
             )
             
             return redirect(
@@ -86,6 +96,11 @@ def update_item(requests, pk):
          
          if form.is_valid():
              form.save()
+             messages.success(
+                 requests,
+                 f"آیتم{item.title} با موفقیت ویرایش شد."
+             )
+             
              return redirect(
                             "item_detail",
                              pk=item.id
@@ -110,9 +125,15 @@ def delete_item(requests, pk):
                 ) 
     
     if requests.method == "POST":
+        item_title = item.title
         item.delete()
+        messages.success(
+        requests, 
+        f"آیتم {item_title} با موفقیت حذف شد."
+        )
+        
         return redirect('list_item')
-    
+
     return render(
         requests,
         "items/confirm_delete.html",
@@ -123,13 +144,14 @@ def delete_item(requests, pk):
 def report(requests):
     
     item = Item.objects.filter(
-        created_by = requests.user
-    ).order_by('-event_date')
+            created_by = requests.user
+        ).order_by('-event_date')
     
     state = item.aggregate(
         opened = Count('id' , filter=models.Q(status='open')),
         closed = Count('id' , filter=models.Q(status = 'closed'))
     )
+
     return render(
         requests,
         "items/report.html",

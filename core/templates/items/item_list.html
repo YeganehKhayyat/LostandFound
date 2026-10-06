@@ -1,6 +1,29 @@
+{% extends 'base.html'%}
+{% block title%}
+لیست آیتم ها
+{%endblock%}
+
+{% block content%}
+<form method="get" class="filters">
+    <label>فیلتر تاریخ
+    <input type="date" name="created_at" value="{{ date|default:'' }}"> <!-- For stablitiy of rendering -->
+  </label>
+  <button type="submit">اعمال فیلتر</button>
+  <a href="/item/list">حذف فیلتر</a>
+</form>
+  
+    {% if items %}
+  <div class="entry-list">
+  </div>
+  {% else %}
+  <p class="empty">هنوز داده‌ای برای نمایش وجود ندارد.</p>
+{% endif %}
 {% for item in items %}
 
     <h3>{{item.title}}</h3>
     <p> {{item.location}}</p>
     <hr>
+{% empty %}
+    <p>هیچ آیتمی در کل سیستم وجود ندارد</p>
 {% endfor %}
+{% endblock%}

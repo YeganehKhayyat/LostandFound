@@ -1,3 +1,9 @@
+{% extends 'base.html'%}
+{% block title%}
+صفحه جزئیات آیتم
+{% endblock%}
+
+{% block content%}
 <a href="{% url 'update_item' item.pk%}">ویرایش آیتم</a>
 <br><br>
 
@@ -12,4 +18,4 @@
 <p> {{item.created_at}} </p>
 
 <p> {{item.category}} </p>
-
+{% endblock %}

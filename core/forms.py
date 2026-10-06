@@ -1,6 +1,7 @@
 from django.forms import ModelForm, ValidationError
 from .models import Item
 from django import forms
+from core.services import BusinuessRule
 class ItemForm(ModelForm):
     class Meta:
         model = Item
@@ -25,9 +26,20 @@ class ItemForm(ModelForm):
         title = self.cleaned_data.get("title")
         if len(title) < 3 :
             raise forms.ValidationError(
-                "عنوان خیلی کوتاه است. باید همانند «کیف پول» بیش از 3 کاراکتر داشته باشد."
-            )
-        return title
+            "عنوان خیلی کوتاه است. باید همانند «کیف پول» بیش از 3 کاراکتر داشته باشد."
+        )
+        try:
+            return BusinuessRule.title_check(title)
+        except ValueError as e:
+            raise ValidationError(str(e))
+    
+    def clean_event_date(self):
+        event_date = self.cleaned_data.get('event_date')
+        try:
+            return BusinuessRule.event_date_condition(event_date)
+        except ValueError as e:
+            raise forms.ValidationError(str(e))
+        
     
     def clean(self):
         cleaned_data = super().clean()
