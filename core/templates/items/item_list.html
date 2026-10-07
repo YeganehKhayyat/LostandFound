@@ -11,13 +11,6 @@
   <button type="submit">اعمال فیلتر</button>
   <a href="/item/list">حذف فیلتر</a>
 </form>
-  
-    {% if items %}
-  <div class="entry-list">
-  </div>
-  {% else %}
-  <p class="empty">هنوز داده‌ای برای نمایش وجود ندارد.</p>
-{% endif %}
 {% for item in items %}
 
     <h3>{{item.title}}</h3>
