@@ -29,7 +29,7 @@ def list_items(requests):
         items = items.filter(created_at__gte=start_date)
         
     if end_date:
-        items = items.filter(created_at__date = end_date)
+        items = items.filter(created_at__lte = end_date)
     
     if query:
         items = items.filter(
