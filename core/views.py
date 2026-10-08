@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.db import models
 from django.contrib import messages
-from core.services import BusinuessRule
+from django.db.models import Q
 # Create your views here.
 
 def list_items(requests):
@@ -15,10 +15,32 @@ def list_items(requests):
     '''
     
     items = Item.objects.all().order_by("-created_at").values()
+    query = requests.GET.get("q")
+    status = requests.GET.get("status")
+    category = requests.GET.get("category")
     selected_date = requests.GET.get("created_at")
     
     if selected_date:
         items = items.filter(created_at__date= selected_date)
+        
+    if query:
+        items = items.filter(
+            Q(title__icontains= query) |
+            Q(location__icontains = query) |
+            Q(description__icontains = query)
+        )
+    
+    if status :
+        items = items.filter(
+            status = status
+        )
+        
+    if category:
+        items = items.filter(
+            category_id = category
+        )
+        
+    print(items.query)
     
     return render(
         requests,
