@@ -26,9 +26,13 @@
 </form>
 
 <form method="get" class="filters">
-    <label>فیلتر تاریخ
-    <input type="date" name="created_at" value="{{ date|default:'' }}"> <!-- For stablitiy of rendering -->
-  </label>
+    <label>از تاریخ
+        <input type="date" name="start_date" value="{{ start_date|default:'' }}">
+    </label>
+    <label>تا تاریخ
+        <input type="date" name="end_date" value="{{ end_date|default:'' }}">
+    </label>
+    
   <button type="submit">اعمال فیلتر</button>
   <a href="/item/list">حذف فیلتر</a>
 </form>

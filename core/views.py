@@ -18,11 +18,19 @@ def list_items(requests):
     query = requests.GET.get("q")
     status = requests.GET.get("status")
     category = requests.GET.get("category")
-    selected_date = requests.GET.get("created_at")
+    # selected_date = requests.GET.get("created_at")
+    start_date = requests.GET.get("start_date")
+    end_date = requests.GET.get("end_date")
     
-    if selected_date:
-        items = items.filter(created_at__date= selected_date)
+    # if selected_date:
+    #     items = items.filter(created_at__date= selected_date)
         
+    if start_date:
+        items = items.filter(created_at__gte=start_date)
+        
+    if end_date:
+        items = items.filter(created_at__date = end_date)
+    
     if query:
         items = items.filter(
             Q(title__icontains= query) |
@@ -47,7 +55,8 @@ def list_items(requests):
         "items/item_list.html",
         context={
             'items' : items ,
-            'date' : selected_date
+            'start_date' : start_date,
+            'end_date' : end_date
             }
     )
 
