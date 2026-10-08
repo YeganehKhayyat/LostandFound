@@ -26,10 +26,10 @@ def list_items(requests):
     #     items = items.filter(created_at__date= selected_date)
         
     if start_date:
-        items = items.filter(created_at__gte=start_date)
+        items = items.filter(created_at__date__gte=start_date)
         
     if end_date:
-        items = items.filter(created_at__lte = end_date)
+        items = items.filter(created_at__date__lte = end_date)
     
     if query:
         items = items.filter(
@@ -47,8 +47,6 @@ def list_items(requests):
         items = items.filter(
             category_id = category
         )
-        
-    print(items.query)
     
     return render(
         requests,
