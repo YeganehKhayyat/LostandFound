@@ -18,12 +18,9 @@ def list_items(requests):
     query = requests.GET.get("q")
     status = requests.GET.get("status")
     category = requests.GET.get("category")
-    # selected_date = requests.GET.get("created_at")
+    sort_val = requests.GET.get("sort")
     start_date = requests.GET.get("start_date")
     end_date = requests.GET.get("end_date")
-    
-    # if selected_date:
-    #     items = items.filter(created_at__date= selected_date)
         
     if start_date:
         items = items.filter(created_at__date__gte=start_date)
@@ -47,6 +44,12 @@ def list_items(requests):
         items = items.filter(
             category_id = category
         )
+        
+    if sort_val == "newest":
+        items = items.order_by("-created_at")
+    elif sort_val == "oldest":
+        items = items.order_by("created_at")
+
     
     return render(
         requests,
@@ -54,7 +57,8 @@ def list_items(requests):
         context={
             'items' : items ,
             'start_date' : start_date,
-            'end_date' : end_date
+            'end_date' : end_date,
+            'sort' : sort_val
             }
     )
 

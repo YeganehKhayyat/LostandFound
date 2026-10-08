@@ -19,7 +19,6 @@
              بسته
         </option>
 
-    </select>
     <input type="number" name="category" placeholder="دسته بندی"value="{{request.GET.category}}">
 
     <button type="submit">search</button>
@@ -32,7 +31,19 @@
     <label>تا تاریخ
         <input type="date" name="end_date" value="{{ end_date|default:'' }}">
     </label>
-    
+
+        </select>
+
+    <select name="sort">
+        <option value="newest" {% if request.GET.sort == "newest" %} selected {% endif %}>
+            جدیدترین
+        </option>
+
+        <option value="oldest" {% if request.GET.sort == "oldest" %} selected {% endif %}>
+            قدیمی ترین
+        </option>
+    </select>
+
   <button type="submit">اعمال فیلتر</button>
   <a href="/item/list">حذف فیلتر</a>
 </form>
