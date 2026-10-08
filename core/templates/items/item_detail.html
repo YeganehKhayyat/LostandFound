@@ -18,4 +18,12 @@
 <p> {{item.created_at}} </p>
 
 <p> {{item.category}} </p>
+
+{% if item.image %}
+    <img src="{{item.image.url}}" alt=" {{item.title}} "/>
+    <label> {{item.image.name}} </label>
+    <p> {{item.image.url}} </p>
+{% else %}
+    <p>تصویری برای این آیتم وجود ندارد.</p>
+{% endif %}
 {% endblock %}

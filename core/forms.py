@@ -11,7 +11,8 @@ class ItemForm(ModelForm):
             'location',
             'event_date',
             'category',
-            'status'
+            'status',
+            'image'
             ]
         
     def clean_description(self):
@@ -48,6 +49,15 @@ class ItemForm(ModelForm):
         except ValueError as e:
             return forms.ValidationError(str(e))
         
+    def clean_image(self):
+        image = self.cleaned_data.get("image")
+        if image:
+            if image.size > 2*1024*1024:
+                raise ValidationError(
+                    "حداکثر حجم مجاز : 2MB"
+                )
+        return image
+                
     def clean(self):
         cleaned_data = super().clean()
         status = cleaned_data.get("status")

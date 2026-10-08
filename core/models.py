@@ -1,7 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+import os
 # Create your models here.
+
+def get_upload_path(instance , filename):
+    if instance.created_by:
+        return os.path.join(
+            "user_%d" % instance.created_by.id , filename)
+    
 class Category(models.Model):
     
     title = models.CharField(max_length=200)
@@ -39,6 +45,12 @@ class Item(models.Model):
                                    on_delete =models.CASCADE,
                                    related_name="items_user"
                                    )
+    
+    image = models.ImageField(
+        upload_to=get_upload_path,
+        blank=True,
+        null = True
+    )
     
     def __str__(self):
             return f"{self.title} | {self.status}"

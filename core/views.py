@@ -14,13 +14,11 @@ def list_items(requests):
     FROM TABLE_NAME
     '''
     
-    items = Item.objects.all()
+    items = Item.objects.all().order_by("-created_at").values()
     selected_date = requests.GET.get("created_at")
     
     if selected_date:
         items = items.filter(created_at__date= selected_date)
-        
-    print(selected_date)
     
     return render(
         requests,
@@ -31,12 +29,20 @@ def list_items(requests):
             }
     )
 
+@login_required(login_url='/admin')
 def create_item(requests):
     
     if requests.method == "POST":
         
         # title = '1100', description = 'i found it', ...
-        form = ItemForm(requests.POST)
+        form = ItemForm(
+            requests.POST,
+            requests.FILES
+            )
+        
+        print(requests.POST)
+        print(requests.FILES)
+        
         if form.is_valid():
             
             item = form.save(commit=False)
@@ -66,7 +72,7 @@ def create_item(requests):
         context= {'form' : form}
         )
     
-@login_required    
+@login_required(login_url='/admin')  
 def item_detail(requests, pk):
 
     item = get_object_or_404(
@@ -80,28 +86,30 @@ def item_detail(requests, pk):
         {'item' : item}
     )
     
-@login_required
+@login_required(login_url='/admin')
 def update_item(requests, pk):
     item  = get_object_or_404(
                 Item,
                 id = pk,
                 created_by = requests.user
-            ) 
-    
+            )
+
     if requests.method == "POST":
+         print("Files received:", requests.FILES)
          form = ItemForm(
              requests.POST,
+             requests.FILES,
              instance=item
              )
          
          if form.is_valid():
-             form.save()
-             messages.success(
+            form.save()
+            messages.success(
                  requests,
-                 f"آیتم{item.title} با موفقیت ویرایش شد."
+                 f"آیتم {item.title} با موفقیت ویرایش شد."
              )
              
-             return redirect(
+            return redirect(
                             "item_detail",
                              pk=item.id
                              )
@@ -116,7 +124,7 @@ def update_item(requests, pk):
         context= {'form' : form}
         )
 
-@login_required  
+@login_required(login_url='/admin')
 def delete_item(requests, pk):
     item  = get_object_or_404(
                     Item,
@@ -132,7 +140,7 @@ def delete_item(requests, pk):
         f"آیتم {item_title} با موفقیت حذف شد."
         )
         
-        return redirect('list_item')
+        return redirect('report')
 
     return render(
         requests,
