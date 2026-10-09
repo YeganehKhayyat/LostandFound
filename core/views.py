@@ -14,19 +14,36 @@ def list_items(requests):
     FROM TABLE_NAME
     '''
     
-    items = Item.objects.all().order_by("-created_at").values()
+    items = Item.objects.all()
+    
     query = requests.GET.get("q")
+    
     status = requests.GET.get("status")
+    
     category = requests.GET.get("category")
-    sort_val = requests.GET.get("sort")
+
     start_date = requests.GET.get("start_date")
     end_date = requests.GET.get("end_date")
-        
+    
+    
+    
     if start_date:
         items = items.filter(created_at__date__gte=start_date)
         
     if end_date:
         items = items.filter(created_at__date__lte = end_date)
+    
+    sort_val = requests.GET.get("sort")
+    
+    sort_options = {
+            "newest" : "-created_at",
+            "oldest" : "created_at"
+        }
+    
+    if sort_val:
+            
+        sort_field = sort_options.get(sort_val , "-created_at")
+        items = items.order_by(sort_field)
     
     if query:
         items = items.filter(
@@ -44,12 +61,6 @@ def list_items(requests):
         items = items.filter(
             category_id = category
         )
-        
-    if sort_val == "newest":
-        items = items.order_by("-created_at")
-    elif sort_val == "oldest":
-        items = items.order_by("created_at")
-
     
     return render(
         requests,
