@@ -47,9 +47,9 @@ def list_items(requests):
     
     if query:
         items = items.filter(
-            Q(title__icontains= query) |
-            Q(location__icontains = query) |
-            Q(description__icontains = query)
+            Q(title__contains= query) |
+            Q(location__contains = query) |
+            Q(description__contains = query)
         )
     
     if status :
