@@ -61,6 +61,8 @@ def list_items(requests):
         items = items.filter(
             category_id = category
         )
+        
+    result_num = items.count()
     
     return render(
         requests,
@@ -69,7 +71,8 @@ def list_items(requests):
             'items' : items ,
             'start_date' : start_date,
             'end_date' : end_date,
-            'sort' : sort_val
+            'sort' : sort_val,
+            'result_num' : result_num
             }
     )
 
