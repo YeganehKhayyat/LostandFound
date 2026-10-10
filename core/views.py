@@ -6,6 +6,7 @@ from django.db.models import Count
 from django.db import models
 from django.contrib import messages
 from django.db.models import Q
+from core.workflows import can_transition, can_create_claim
 # Create your views here.
 
 def list_items(requests):
@@ -135,14 +136,14 @@ def item_detail(requests, pk):
     
 @login_required(login_url='/admin')
 def update_item(requests, pk):
+    print(requests.user.get_all_permission("core.change_item"))
     item  = get_object_or_404(
                 Item,
                 id = pk,
                 created_by = requests.user
             )
-
+      
     if requests.method == "POST":
-         print("Files received:", requests.FILES)
          form = ItemForm(
              requests.POST,
              requests.FILES,
@@ -215,3 +216,49 @@ def report(requests):
          'state' : state
          }
     )
+    
+@login_required(login_url='/admin')
+def change_status(requests, pk):
+    
+    new_status = requests.POST.get("status")
+    
+    item  = get_object_or_404(
+                Item,
+                id = pk,
+                created_by = requests.user
+            )
+    # Guard clause
+    if not can_transition(item , new_status): 
+        messages.error(
+            requests,
+        "این تغییر وضعیت مجاز نیست."
+        )
+        return redirect( 
+        "item_detail" ,
+        pk = item.id
+    )
+        
+    item.status = new_status
+    item.save()
+        
+    messages.success(
+            requests,
+            f"ایتم به وضعیت {new_status} "
+        )
+    
+def create_claim(requests , pk):
+    item  = get_object_or_404(
+        Item,
+        id = pk,
+        created_by = requests.user
+    )
+    # form validation
+    if not can_create_claim(item, requests.user):
+        messages.error(
+            requests,
+            f"ثبت درخواست برای این آیتم امکان پذیر نیست."
+        )
+        return redirect(
+            "item_detail",
+            pk = item.id
+        )

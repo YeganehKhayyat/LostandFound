@@ -20,7 +20,8 @@ from core.views import (
                         list_items,
                         item_detail,
                         update_item,
-                        delete_item
+                        delete_item,
+                        change_status
                         )
 
 
@@ -29,5 +30,6 @@ urlpatterns = [
     path("list/" ,list_items , name='list_item'),
     path("<int:pk>/" , item_detail , name = 'item_detail'),
     path("<int:pk>/edit/" ,update_item , name='update_item' ),
-    path("<int:pk>/delete/" , delete_item, name= 'delete_item')
+    path("<int:pk>/delete/" , delete_item, name= 'delete_item'),
+    path("<int:pk>/change_status/" , change_status , name="change_status_item")
 ]

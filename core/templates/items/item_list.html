@@ -18,7 +18,7 @@
         <option value="closed" {% if request.GET.status == "closed" %} selected {% endif %}>
              بسته
         </option>
-
+    </select>
     <input type="number" name="category" placeholder="دسته بندی"value="{{request.GET.category}}">
 
     <button type="submit">search</button>

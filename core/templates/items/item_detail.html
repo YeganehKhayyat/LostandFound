@@ -7,6 +7,40 @@
 <a href="{% url 'update_item' item.pk%}">ویرایش آیتم</a>
 <br><br>
 
+{% if item.status == "open"%}
+<form method="post">
+    {% csrf_token %}
+    
+    <button type="submit">ثبت درخواست مالکیت</button>
+</form>
+{% endif %}
+
+
+
+<form method="post" action="{% url 'change_status_item' item.id %}">
+    {% csrf_token %}
+    <select name="status">
+
+        <option value="open" {% if item.status == "open" %} selected {% endif %}>
+            باز
+        </option>
+
+        <option value="closed" {% if item.status == "closed" %} selected {% endif %}>
+             بسته
+        </option>
+
+        <option value="reviewing" {% if item.status == "reviewing" %} selected {% endif %}>
+             در حال بررسی
+        </option>
+
+        <option value="delivered" {% if item.status == "delivered" %} selected {% endif %}>
+             تحویل داده شده
+        </option>
+    </select>
+    <button type="submit">ثبت تغییر وضعیت</button>
+</form>
+<br><br>
+
 <h1> {{item.title}} </h1>
 
 <p> {{item.description}} </p>
