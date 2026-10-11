@@ -1,4 +1,33 @@
-# مستندات سامانه وسایل گمشده و پیدا‌شده
+# Lost And Found
+
+## About
+
+## Features
+
+## Tech Stack
+
+## Requirments
+
+## Installation
+git
+python   3.11.9
+Django   6.1.1
+
+git clone https://github.com/YeganehKhayyat/LostandFound.git
+cd LostandFound
+python -m venv .venv
+pip install -r requirments.txt
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+
+## Run Projects
+
+## Environment Variables
+
+## Database Setup
+
+## Create Superuser
 
 ## ۱. افراد درگیر
 
