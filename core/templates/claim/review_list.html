@@ -1,0 +1,47 @@
+{% extends 'base.html'%}
+
+{% block title %}
+لیست درخواست های مالکیت آیتم ها
+{% endblock %}
+
+{% block content%}
+{% if claims %}
+    {% for claim in claims %}
+        <div>
+            <h3> {{claim.item.title}} </h3>
+            <p>
+                درخواست دهنده:
+                {{claim.claimant.username}}
+            </p>
+            <p>
+                متن اثبات مالکیت:
+                {{claim.proof_text}}
+            </p>
+            <p>
+                تاریخ ثبت:
+                {{claim.created_at}}
+
+            </p>
+        {% if claim.status == 'pending' %}
+        <form method="post"  action="{% url 'approve_reject_claim' claim.id %}">
+            <input type="hidden" value="approve"  name="status"/>
+            {% csrf_token%}
+            <button type="submit">تایید</button>
+        </form>
+        {% endif %}
+        {% if claim.status == 'pending'%}
+        <form method="post" action="{% url 'approve_reject_claim' claim.id %}">
+            {% csrf_token%}
+            <input type="hidden" value="reject" name="status"/>
+            <button type="submit">رد</button>
+        </form>
+        {% else %}
+        <p>
+            درخواستی برای ثبت وجود ندارد
+        </p>
+        {% endif %}
+        </div>
+        <hr/>
+    {% endfor %}
+{% endif %}
+{% endblock %}

@@ -1,7 +1,8 @@
 from django.forms import ModelForm, ValidationError
-from .models import Item
+from .models import Item, Claim
 from django import forms
 from core.services import BusinuessRule
+
 class ItemForm(ModelForm):
     class Meta:
         model = Item
@@ -69,4 +70,9 @@ class ItemForm(ModelForm):
         return cleaned_data
         
         
-    
+class ClaimForm(ModelForm):
+    class Meta:
+        model = Claim
+        fields = [
+            'proof_text'
+        ]

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect ,get_object_or_404
-from core.forms import ItemForm
-from core.models import Item
+from core.forms import ItemForm, ClaimForm
+from core.models import Item, Claim
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.db import models
@@ -245,12 +245,13 @@ def change_status(requests, pk):
             requests,
             f"ایتم به وضعیت {new_status} "
         )
+
+@login_required(login_url='/admin')    
+def submit_claim(requests , pk):
     
-def create_claim(requests , pk):
     item  = get_object_or_404(
         Item,
-        id = pk,
-        created_by = requests.user
+        id = pk
     )
     # form validation
     if not can_create_claim(item, requests.user):
@@ -261,4 +262,80 @@ def create_claim(requests , pk):
         return redirect(
             "item_detail",
             pk = item.id
+        )
+        
+    if requests.method == "POST":
+        form = ClaimForm(requests.POST)
+        
+        if form.is_valid():
+            claim = form.save(commit=False)
+            
+            claim.item = item
+            claim.claimant = requests.user
+            claim.status = Claim.Status.PENDING
+            claim.save()
+            
+            messages.success(
+                requests , 
+                "مالکیت شما ثبت شد"
+            )
+            return redirect(
+                "item_detail" ,
+                pk = item.id
+            )
+    else:
+        form = ClaimForm()
+        
+    return render(
+        requests , 
+        "items/submit_claim.html" , 
+        context= {
+            'form' : form,
+            'item' : item
+            }
+    )
+    
+@login_required(login_url="admin/")
+def claim_review_list(requests):
+    claims = Claim.objects.filter(
+        status = Claim.Status.PENDING
+    ).order_by("-created_at")
+    
+    return render (
+        requests,
+        "claim/review_list.html",
+        {'claims' : claims}
+    )
+    
+def approve_reject_claim(requests, pk):
+    claim = get_object_or_404(
+        Claim,
+        id=pk
+    )
+    if requests.method == "POST":
+        new_status = requests.POST.get("status")
+        
+        if new_status == 'approve':
+            claim.status = Claim.Status.APPROVED
+            claim.item.status = Item.Status.REVIEWING
+            claim.item.save()
+            claim.save()
+            msg_txt = "درخواست مالکیت تایید شد"
+            
+        elif new_status == 'reject':
+            claim.status = Claim.Status.REJECTED
+            claim.save()
+            msg_txt = "درخواست مالکیت رد شد"
+            
+            
+        else:
+            msg_txt = "درخواست مالکیت وضعیت درستی ندارد"
+        
+        messages.success(
+            requests ,
+            msg_txt
+        )
+    
+    return redirect(
+        "claim_review_list"
         )
