@@ -1,0 +1,37 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'core/styles.css' %}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <title>  {% block title%} {% endblock%} </title>
+
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-content">
+            <img src="/media/logo.png" , alt="Hakim Sabzevari" width="235" height="75" />
+            <nav>
+                <a href="{% url 'register' %}">ثبت نام</a>
+                <a href="{% url 'login' %}">ورود</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        {% block content%}
+        {% endblock %}
+    </main>
+    <div class="container">
+        <h2>درباره حکیم یاب</h2>
+        <p>
+            اولش تکی رفتم جلو ولی الان با هم میریم جلو!!!
+            برای ارتباط بیشتر با من :
+            yeganehkhayyat045@gmail.com
+        </p>
+    </div>
+</body>
+</html>
