@@ -31,3 +31,15 @@ Expected:
 صفحه اصلی و لیست آیتم های گمشده را نمایش دهد.
 Actual:
 ارور 404 و عدم وجود این صفحه
+
+## Bug-03
+
+Title
+Bug: User cannot access to the Django admin panel.
+
+Description
+Expected: Redirect user to User authentication panel.
+Actual: Redirect user to Django admin panel.
+
+Steps you need
+You can change you URL redirect in views.py or define it in settings.py.

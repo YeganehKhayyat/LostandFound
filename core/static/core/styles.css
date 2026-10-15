@@ -32,3 +32,13 @@ nav a {
 	margin-right:16px;
     margin-left: 20px;
 }
+
+#already-registered a{
+    text-decoration: none;
+    color: #1f0062;
+}
+
+#never-registered a{
+    text-decoration: none;
+    color: #1f0062;
+}

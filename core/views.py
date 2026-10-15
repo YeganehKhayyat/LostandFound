@@ -77,7 +77,7 @@ def list_items(requests):
             }
     )
 
-@login_required(login_url='/admin')
+@login_required(login_url='/login')
 def create_item(requests):
     
     if requests.method == "POST":
@@ -120,7 +120,7 @@ def create_item(requests):
         context= {'form' : form}
         )
     
-@login_required(login_url='/admin')  
+@login_required(login_url='/login')  
 def item_detail(requests, pk):
 
     item = get_object_or_404(
@@ -134,7 +134,7 @@ def item_detail(requests, pk):
         {'item' : item}
     )
     
-@login_required(login_url='/admin')
+@login_required(login_url='/login')
 def update_item(requests, pk):
     print(requests.user.get_all_permission("core.change_item"))
     item  = get_object_or_404(
@@ -172,7 +172,7 @@ def update_item(requests, pk):
         context= {'form' : form}
         )
 
-@login_required(login_url='/admin')
+@login_required(login_url='/login')
 def delete_item(requests, pk):
     item  = get_object_or_404(
                     Item,
@@ -196,7 +196,7 @@ def delete_item(requests, pk):
         {'item' : item}
     )
     
-@login_required(login_url='/admin')
+@login_required(login_url='/login')
 def report(requests):
     
     item = Item.objects.filter(
@@ -217,7 +217,7 @@ def report(requests):
          }
     )
     
-@login_required(login_url='/admin')
+@login_required(login_url='/login')
 def change_status(requests, pk):
     
     new_status = requests.POST.get("status")
@@ -246,7 +246,7 @@ def change_status(requests, pk):
             f"ایتم به وضعیت {new_status} "
         )
 
-@login_required(login_url='/admin')    
+@login_required(login_url='/login')    
 def submit_claim(requests , pk):
     
     item  = get_object_or_404(
@@ -295,7 +295,7 @@ def submit_claim(requests , pk):
             }
     )
     
-@login_required(login_url="admin/")
+@login_required(login_url="/login")
 def claim_review_list(requests):
     claims = Claim.objects.filter(
         status = Claim.Status.PENDING
@@ -307,6 +307,7 @@ def claim_review_list(requests):
         {'claims' : claims}
     )
     
+@login_required(login_url="/login")    
 def approve_reject_claim(requests, pk):
     claim = get_object_or_404(
         Claim,
