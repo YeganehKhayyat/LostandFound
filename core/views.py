@@ -136,7 +136,7 @@ def item_detail(requests, pk):
     
 @login_required(login_url='/login')
 def update_item(requests, pk):
-    print(requests.user.get_all_permission("core.change_item"))
+    print(requests.user.get_all_permissions("core.change_item"))
     item  = get_object_or_404(
                 Item,
                 id = pk,
