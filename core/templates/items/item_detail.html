@@ -1,21 +1,10 @@
 {% extends 'base.html'%}
+
 {% block title%}
 صفحه جزئیات آیتم
 {% endblock%}
 
 {% block content%}
-<a href="{% url 'update_item' item.pk%}">ویرایش آیتم</a>
-<br><br>
-
-{% if item.status == "open"%}
-<form method="post">
-    {% csrf_token %}
-    
-    <button type="submit">ثبت درخواست مالکیت</button>
-</form>
-{% endif %}
-
-
 
 <form method="post" action="{% url 'change_status_item' item.id %}">
     {% csrf_token %}
@@ -39,6 +28,18 @@
     </select>
     <button type="submit">ثبت تغییر وضعیت</button>
 </form>
+
+<a href="{% url 'update_item' item.pk%}">ویرایش آیتم</a>
+<br><br>
+
+{% if item.status == "open"%}
+<form method="post" action="{% url 'submit_claim' item.id %}">
+    {% csrf_token %}
+    
+    <button type="submit">ثبت درخواست مالکیت</button>
+</form>
+{% endif %}
+
 <br><br>
 
 <h1> {{item.title}} </h1>
@@ -49,7 +50,7 @@
 
 <p> {{item.location}} </p>
 
-<p> {{item.created_at}} </p>
+<p> {{item.event_date}} </p>
 
 <p> {{item.category}} </p>
 

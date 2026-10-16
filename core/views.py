@@ -227,11 +227,12 @@ def change_status(requests, pk):
                 id = pk,
                 created_by = requests.user
             )
+    
     # Guard clause
     if not can_transition(item , new_status): 
         messages.error(
             requests,
-        "این تغییر وضعیت مجاز نیست."
+        "این تغییر وضعیت ممکن نیست."
         )
         return redirect( 
         "item_detail" ,
@@ -245,9 +246,15 @@ def change_status(requests, pk):
             requests,
             f"ایتم به وضعیت {new_status} "
         )
+    return redirect(
+        "item_detail",
+        pk = item.id
+    )
 
 @login_required(login_url='/login')    
 def submit_claim(requests , pk):
+    # Form
+    # Validation
     
     item  = get_object_or_404(
         Item,
@@ -289,7 +296,8 @@ def submit_claim(requests , pk):
     return render(
         requests , 
         "items/submit_claim.html" , 
-        context= {
+        context= 
+        {
             'form' : form,
             'item' : item
             }

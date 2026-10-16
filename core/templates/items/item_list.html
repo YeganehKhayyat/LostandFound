@@ -51,10 +51,14 @@
     <h3>آیتم ها با فیلتر موجود :   {{result_num}} </h3>
 <hr>
 {% for item in items %}
-
-    <h3>{{item.title}}</h3>
-    <p> {{item.location}}</p>
+    <div>
+        <a href="{% url 'item_detail' item.pk %}" class="item-info">
+            <h3>{{item.title}}</h3>
+            <p> {{item.location}}</p>
+        </a>
+    </div>
     <hr>
+
 {% empty %}
     <p>هیچ آیتمی در کل سیستم وجود ندارد</p>
 {% endfor %}
