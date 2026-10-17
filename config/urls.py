@@ -19,14 +19,14 @@ from django.urls import path, include
 from core.views import report
 from django.conf.urls.static import static
 from django.conf import settings
-from core.views import list_items
+from home.views import home
 from authentication.views import register, logout_view
 from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('item/' , include("core.urls")),
     path('report/' , report, name='report' ),
-    path('' ,list_items , name="list_item"),
+    path('' ,home , name="home"),
     path('signup/' , register, name="register"),
     path('login/' , auth_views.LoginView.as_view(template_name = "authentication/login.html"), name="login"),
     path('logout/' ,logout_view ,name="logout"),

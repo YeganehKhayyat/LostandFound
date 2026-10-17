@@ -11,21 +11,18 @@
         <p>نگران نباش اگه چیزی گم کردی! ما در طول مسیر باهات می‌مونیم.</p>
     </div>
 
-    <div class="container">
-        <div class="card">
-            <article class="card">
-                <h3>چیزی پیدا کردید؟</h3>
-                <p>اگر چیزی پیدا کردید در فرم اعلام یافتن ثبت کنید تا به مالک آن اطلاع رسانی کنیم.</p>
-                <a href="{% url 'submit_claim'%}">فرم اعلام یافتن</a>
-            </article>
+    <div class="card w-75 mb-3">
+        <div class="card-body">
+            <h5 class="card-title">آیا چیزی پیدا کردید؟</h5>
+            <p class="card-text">اگر چیزی پیدا کردید اینجا اعلام کنید تا افراد آیتم گمشده خود را پیدا کنند.</p>
+            <a href="{% url 'create_item' %}" class="btn btn-primary">فرم اعلام یافتن</a>
         </div>
-
-        <div class="card">
-            <article class="card">
-                <h3>گمشده‌ای دارید؟</h3>
-                <p>اگر چیزی گم کردید، فرم اعلام مفقودی را پر کنید تا زمانی که گمشده‌تان پیدا شد به شما اطلاع دهیم.</p>
-                <a href="{% url 'create_item'%}">فرم اعلام یافتن</a>
-            </article>
+    </div>
+        <div class="card w-75 mb-3">
+        <div class="card-body">
+            <h5 class="card-title">آیا چیزی گم کردید؟</h5>
+            <p class="card-text">اگر چیزی گم کردید لیست گمشده ها در اینجا به شما نمایش داده  خواهد شد.</p>
+            <a href="{% url 'list_item' %}" class="btn btn-primary">لیست گمشده ها</a>
         </div>
     </div>
 

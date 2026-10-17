@@ -29,6 +29,7 @@ body {
 nav a {
 	color:var(--textlink);
 	text-decoration:none;
+    cursor: pointer;
 	margin-right:16px;
     margin-left: 20px;
 }
