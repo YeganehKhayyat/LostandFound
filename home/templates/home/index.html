@@ -1,49 +1,95 @@
 {% extends 'base.html' %}
 
-{% block title %}
-حکیم فایند
-{% endblock %}
+{% block title %}حکیم فایند | پیدا کردن، دوباره{% endblock %}
 
-{% block content%}
-
-    <div class="start">
-        <h1>سریع تر از گذشته پیدا کن</h1>
-        <p>نگران نباش اگه چیزی گم کردی! ما در طول مسیر باهات می‌مونیم.</p>
-    </div>
-
-    <div class="card w-75 mb-3">
-        <div class="card-body">
-            <h5 class="card-title">آیا چیزی پیدا کردید؟</h5>
-            <p class="card-text">اگر چیزی پیدا کردید اینجا اعلام کنید تا افراد آیتم گمشده خود را پیدا کنند.</p>
-            <a href="{% url 'create_item' %}" class="btn btn-primary">فرم اعلام یافتن</a>
+{% block content %}
+<section class="hero">
+    <div class="hero-glow hero-glow-one"></div>
+    <div class="hero-glow hero-glow-two"></div>
+    <div class="container hero-inner">
+        <div class="hero-copy">
+            <div class="eyebrow"><span class="eyebrow-dot"></span> مخصوص جامعه‌ی دانشگاهی</div>
+            <h1>گم شده؟<br><span>با هم پیداش می‌کنیم.</span></h1>
+            <p class="hero-description">گاهی یک وسیله‌ی کوچک، کلی از روزمان را درگیر می‌کند. حکیم فایند کمک می‌کند اشیای گمشده و پیدا شده راحت‌تر به صاحبشان برگردند.</p>
+            <div class="hero-actions">
+                <a class="button button-primary" href="{% url 'list_item' %}">دیدن فهرست گمشده‌ها <span aria-hidden="true">←</span></a>
+                <a class="button button-ghost" href="{% url 'create_item' %}">اعلام وسیله‌ی پیدا شده <span aria-hidden="true">＋</span></a>
+            </div>
+            <div class="hero-note"><span class="note-check">✓</span> ساده، در دسترس و برای کمک به همدیگه</div>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+            <div class="visual-orbit orbit-one"></div>
+            <div class="visual-orbit orbit-two"></div>
+            <div class="search-card">
+                <div class="search-card-top"><span class="mini-icon">⌕</span><span>دنبال چیزی می‌گردی؟</span><span class="three-dots">•••</span></div>
+                <div class="item-preview">
+                    <div class="item-symbol symbol-key">⌁</div>
+                    <div><strong>کلید و وسایل شخصی</strong><small>شاید همین اطراف باشد</small></div>
+                    <span class="item-arrow">↙</span>
+                </div>
+                <div class="item-preview">
+                    <div class="item-symbol symbol-book">▤</div>
+                    <div><strong>کتاب و جزوه</strong><small>گمشده‌ها را بررسی کن</small></div>
+                    <span class="item-arrow">↙</span>
+                </div>
+                <div class="item-preview">
+                    <div class="item-symbol symbol-bag">▣</div>
+                    <div><strong>کیف و لوازم</strong><small>یک گزارش شاید کافی باشد</small></div>
+                    <span class="item-arrow">↙</span>
+                </div>
+                <div class="floating-badge"><span>✓</span><div><strong>امیدوار باش</strong><small>هر سرنخی مهم است</small></div></div>
+            </div>
+            <div class="visual-spark spark-one">✳</div>
+            <div class="visual-spark spark-two">✦</div>
         </div>
     </div>
-        <div class="card w-75 mb-3">
-        <div class="card-body">
-            <h5 class="card-title">آیا چیزی گم کردید؟</h5>
-            <p class="card-text">اگر چیزی گم کردید لیست گمشده ها در اینجا به شما نمایش داده  خواهد شد.</p>
-            <a href="{% url 'list_item' %}" class="btn btn-primary">لیست گمشده ها</a>
+    <div class="hero-bottom-line"></div>
+</section>
+
+<section class="container action-section">
+    <div class="section-heading">
+        <span class="section-kicker">از کجا شروع کنیم؟</span>
+        <h2>چه اتفاقی افتاده؟</h2>
+        <p>یکی از مسیرها را انتخاب کن؛ ادامه‌اش ساده است.</p>
+    </div>
+    <div class="action-grid">
+        <article class="action-card found-card">
+            <div class="action-icon icon-found" aria-hidden="true">⌖</div>
+            <span class="card-label">می‌خواهی کمک کنی؟</span>
+            <h3>چیزی پیدا کردی؟</h3>
+            <p>با ثبت مشخصات وسیله‌ی پیدا شده، به صاحبش کمک کن دوباره آن را پیدا کند.</p>
+            <a class="card-link" href="{% url 'create_item' %}">ثبت وسیله‌ی پیدا شده <span aria-hidden="true">←</span></a>
+            <div class="card-decoration decoration-found" aria-hidden="true">＋</div>
+        </article>
+        <article class="action-card lost-card">
+            <div class="action-icon icon-lost" aria-hidden="true">⌕</div>
+            <span class="card-label">دنبال وسیله‌ات می‌گردی؟</span>
+            <h3>چیزی گم کردی؟</h3>
+            <p>فهرست موارد ثبت‌شده را ببین؛ شاید وسیله‌ات همین حالا منتظر پیدا شدن باشد.</p>
+            <a class="card-link" href="{% url 'list_item' %}">مشاهده‌ی فهرست گمشده‌ها <span aria-hidden="true">←</span></a>
+            <div class="card-decoration decoration-lost" aria-hidden="true">⌕</div>
+        </article>
+    </div>
+</section>
+
+<section class="about-section">
+    <div class="container about-layout">
+        <div class="about-heading">
+            <span class="section-kicker">داستان حکیم فایند</span>
+            <h2>یک ایده‌ی ساده،<br><span>برای یک مشکل واقعی.</span></h2>
+            <p>گاهی یک پیام بین صدها پیام گروه دانشگاه گم می‌شود. قرار نیست پیدا کردن وسیله‌ات هم به یک دردسر دیگر تبدیل شود.</p>
+            <div class="about-mark" aria-hidden="true">H<span>.</span></div>
+        </div>
+        <div class="faq-list">
+            <details class="faq-item" open>
+                <summary><span class="faq-number">۰۱</span><span>واقعاً به چنین سامانه‌ای نیاز بود؟</span><span class="faq-plus" aria-hidden="true">＋</span></summary>
+                <p>این ایده وقتی شکل گرفت که خودم در دانشگاه چیزی گم کرده بودم. اعلام گم‌شدن وسایل در گروه‌ها خیلی زود میان پیام‌ها گم می‌شود؛ گاهی هم دسترسی به پیام‌رسان یا پاسخ‌گویی ادمین‌ها ممکن نیست. حکیم فایند تلاش می‌کند این فرایند را مرتب‌تر و ساده‌تر کند.</p>
+            </details>
+            <details class="faq-item">
+                <summary><span class="faq-number">۰۲</span><span>چرا این پروژه را شروع کردیم؟</span><span class="faq-plus" aria-hidden="true">＋</span></summary>
+                <p>شروعش با یک ایده‌ی کوچک برای یادگیری و ساخت رزومه بود؛ اما کم‌کم به پروژه‌ای واقعی تبدیل شد. هدف این است که پیدا کردن وسایل گمشده برای دانشجوها آسان‌تر شود.</p>
+            </details>
         </div>
     </div>
-
-    <div class="about">
-        <h1>پاسخ به سوالات شما</h1>
-        <ul>
-            <li>واقعا همچین چیزی لازم بود؟</li>
-        </ul>
-        <p>
-            راستش وقتی این ایده به ذهنم رسید خودم چیزی گم کرده بودم توی دانشگاه
-            از طرفی وقتی توی گروه ها بیان میشه چیزی گم کردیم بین اون همه پیام گم میشه.
-            گاها هم ممکنه تلگرام اذیت بکنه و بالا نیاد یا ادمین های کانال همیار دانشجو دستشون بند باشه
-            این طوری یه بار خیلی خیلی سنگین هم از دوش اونا برداشته میشه.
-        </p>
-        <ul>
-            <li>حالا چرا؟</li>
-        </ul>
-        <p>
-            اولش فکر می‌کردم اوکی خیلی اوپن سورسه و من هم میتونم رزومه جمع کنم بعد دیدم نه جدی شد.
-            خلاصه اینطور شد که به اینجا رسیدیم.
-        </p>
-    </div>
-
+</section>
 {% endblock %}

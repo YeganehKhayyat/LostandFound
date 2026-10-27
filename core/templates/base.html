@@ -1,31 +1,41 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="{% static 'core/styles.css' %}" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <title>  {% block title%} {% endblock%} </title>
-
+    <meta name="theme-color" content="#123b35">
+    <link rel="stylesheet" href="{% static 'core/styles.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <title>{% block title %}حکیم فایند{% endblock %}</title>
 </head>
 <body>
     <header class="site-header">
         <div class="container header-content">
-            <img src="/media/logo.png" , alt="Hakim Sabzevari" width="235" height="75" />
-            <nav>
-                <a href="{% url 'register' %}">ثبت نام</a>
+            <a class="brand" href="{% url 'home' %}" aria-label="صفحه اصلی حکیم فایند">
+                <img src="/media/logo.png" alt="لوگوی حکیم فایند" width="180" height="58">
+                <span class="brand-copy">
+                    <strong>حکیم فایند</strong>
+                    <small>سامانه اشیای گمشده و پیدا شده</small>
+                </span>
+            </a>
+            <button class="nav-toggle" type="button" aria-label="باز کردن منو" aria-expanded="false" aria-controls="main-nav">
+                <span></span><span></span><span></span>
+            </button>
+            <nav class="main-nav" id="main-nav" aria-label="منوی اصلی">
+                <a class="nav-link" href="{% url 'home' %}">صفحه اصلی</a>
+                <a class="nav-link" href="{% url 'list_item' %}">جست‌وجوی گمشده‌ها</a>
+                <a class="nav-link" href="{% url 'register' %}">ثبت‌نام</a>
                 {% if not user.is_authenticated %}
-                    <a href="{% url 'login' %}">ورود</a>
+                <a class="nav-login" href="{% url 'login' %}">ورود به حساب <span aria-hidden="true">←</span></a>
                 {% else %}
-                    <a href="{% url 'logout' %}">خروج</a>
+                <a class="nav-login" href="{% url 'logخعف' %}">خروج<span aria-hidden="true">←</span></a>
                 {% endif %}
             </nav>
         </div>
     </header>
-    <br><br>
     {% if messages%}
         {% for message in messages%}
             <div class="alert alert-success d-inline-block" role="alert">
@@ -34,9 +44,37 @@
         {% endfor %}
     {% endif %}
     <main>
-        {% block content%}
-        {% endblock %}
+        {% block content %}{% endblock %}
     </main>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+    <footer class="site-footer">
+        <div class="container footer-content">
+            <div class="footer-about">
+                <a class="footer-brand" href="{% url 'home' %}">حکیم فایند<span>.</span></a>
+                <p>برای پیدا کردن دوباره‌ی چیزهایی که برایمان مهم‌اند؛ کنار هم هستیم.</p>
+            </div>
+            <div class="footer-contact">
+                <span class="footer-label">ارتباط با ما</span>
+                <a href="mailto:yeganehkhayyat045@gmail.com">yeganehkhayyat045@gmail.com</a>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <span>ساخته‌شده با همراهی جامعه‌ی دانشگاهی</span>
+            <a href="{% url 'home' %}">بازگشت به بالا ↑</a>
+        </div>
+    </footer>
+
+    <script>
+        (() => {
+            const toggle = document.querySelector('.nav-toggle');
+            const nav = document.querySelector('.main-nav');
+            if (!toggle || !nav) return;
+            toggle.addEventListener('click', () => {
+                const isOpen = nav.classList.toggle('is-open');
+                toggle.setAttribute('aria-expanded', String(isOpen));
+                toggle.setAttribute('aria-label', isOpen ? 'بستن منو' : 'باز کردن منو');
+            });
+        })();
+    </script>
 </body>
 </html>
