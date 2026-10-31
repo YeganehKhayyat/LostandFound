@@ -1,17 +1,282 @@
-<h1>Report page</h1>
-{%if state.count == 0%}
-    <a href="{% url 'create_item' %}">Submit Item</a>
-{%endif%}
-<h3>Total submitted Items:  {{item.count}} </h3>
-<h3> Total Open status Item : {{state.opened}} </h3>
-<h3>Total closed status Item: {{state.closed}} </h3>
-{% for i in item %}
-    <p> {{i.title}}  &nbsp; | &nbsp; {{i.status}} </p>
-    <a href="{% url 'update_item' i.pk%} "> Edit</a> &nbsp;
-    <a href="{% url 'delete_item' i.pk%} "> Delete</a>
-    <hr>
-{% endfor %}
-<br><br>
+{% extends 'base.html' %}
+{% load static %}
 
+{% block title %}گزارش آیتم‌ها | Hakim Find{% endblock %}
+{% block content %}
+<style>
+    /* Hakim Find - Report dashboard */
+.report-page {
+    width: min(1120px, calc(100% - 40px));
+    margin: 42px auto 72px;
+    color: #20352d;
+    direction: rtl;
+}
 
+.report-header,
+.list-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
 
+.report-header { margin-bottom: 30px; }
+.report-eyebrow {
+    display: inline-block;
+    margin-bottom: 9px;
+    color: #648276;
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+}
+.report-header h1 {
+    margin: 0 0 8px;
+    color: #174b39;
+    font-size: clamp(1.65rem, 3vw, 2.15rem);
+    font-weight: 800;
+}
+.report-header p,
+.list-heading p {
+    margin: 0;
+    color: #78877f;
+    font-size: .94rem;
+    line-height: 1.9;
+}
+
+.report-primary-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 10px 18px;
+    border: 1px solid #1f6b52;
+    border-radius: 11px;
+    background: #1f6b52;
+    color: #fff !important;
+    font: inherit;
+    font-size: .9rem;
+    font-weight: 700;
+    text-decoration: none !important;
+    white-space: nowrap;
+    transition: background .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+.report-primary-btn:hover {
+    background: #18563f;
+    box-shadow: 0 6px 16px rgba(31, 107, 82, .16);
+    transform: translateY(-1px);
+}
+.report-primary-btn span { font-size: 1.25rem; line-height: 1; }
+
+.report-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 34px;
+}
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 112px;
+    padding: 22px;
+    border: 1px solid #e6eee9;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 5px 20px rgba(26, 66, 49, .045);
+}
+.stat-icon {
+    display: grid;
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    border-radius: 13px;
+    background: #edf5f0;
+    color: #1f6b52;
+    font-size: 1.45rem;
+    font-weight: 700;
+}
+.stat-open .stat-icon { background: #fff6e7; color: #a66b16; }
+.stat-closed .stat-icon { background: #eaf5ee; color: #398052; }
+.stat-label { display: block; margin-bottom: 7px; color: #78877f; font-size: .84rem; }
+.stat-number { color: #244b3b; font-size: 1.8rem; font-weight: 800; line-height: 1.2; }
+
+.report-list-section {
+    overflow: hidden;
+    border: 1px solid #e6eee9;
+    border-radius: 17px;
+    background: #fff;
+    box-shadow: 0 5px 22px rgba(26, 66, 49, .045);
+}
+.list-heading { padding: 23px 25px; border-bottom: 1px solid #edf1ee; }
+.list-heading h2 { margin: 0 0 5px; color: #244b3b; font-size: 1.18rem; font-weight: 800; }
+.list-heading p { font-size: .84rem; }
+.report-add-btn { min-height: 40px; padding: 8px 14px; font-size: .84rem; }
+.report-table-wrap { width: 100%; overflow-x: auto; }
+.report-table { width: 100%; border-collapse: collapse; text-align: right; }
+.report-table th,
+.report-table td { padding: 17px 25px; border-bottom: 1px solid #edf1ee; vertical-align: middle; }
+.report-table th { background: #f8faf8; color: #718078; font-size: .8rem; font-weight: 700; white-space: nowrap; }
+.report-table td { color: #43564c; font-size: .9rem; }
+.report-table tbody tr:last-child td { border-bottom: 0; }
+.report-table tbody tr:hover { background: #fbfdfb; }
+.item-title-cell { min-width: 220px; color: #244b3b !important; font-weight: 700; }
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 75px;
+    padding: 6px 11px;
+    border-radius: 30px;
+    background: #edf3ef;
+    color: #486457;
+    font-size: .78rem;
+    font-weight: 700;
+}
+.status-open, .status-opened { background: #fff4df; color: #946117; }
+.status-closed, .status-delivered { background: #e8f4eb; color: #34734a; }
+.status-reviewing { background: #eaf1fb; color: #42658f; }
+.item-actions { display: flex; align-items: center; gap: 9px; }
+.action-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+    padding: 7px 11px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: .8rem;
+    font-weight: 700;
+    text-decoration: none !important;
+    transition: background .2s ease;
+}
+.edit-link { border-color: #dcebe2; background: #f0f7f2; color: #276448 !important; }
+.edit-link:hover { background: #e2f0e6; }
+.delete-link { border-color: #f2e0df; background: #fff5f4; color: #a64d48 !important; }
+.delete-link:hover { background: #fde9e7; }
+
+.report-empty-state { padding: 58px 20px 62px; text-align: center; }
+.empty-icon {
+    display: grid;
+    width: 62px;
+    height: 62px;
+    margin: 0 auto 17px;
+    place-items: center;
+    border-radius: 18px;
+    background: #edf5f0;
+    color: #1f6b52;
+    font-size: 1.8rem;
+}
+.report-empty-state h3 { margin: 0 0 8px; color: #244b3b; font-size: 1.08rem; }
+.report-empty-state p { margin: 0 0 20px; color: #78877f; font-size: .88rem; }
+
+@media (max-width: 760px) {
+    .report-page { width: min(100% - 28px, 600px); margin-top: 28px; }
+    .report-header { align-items: flex-start; flex-direction: column; }
+    .report-stats { grid-template-columns: 1fr; gap: 12px; margin-bottom: 24px; }
+    .stat-card { min-height: 92px; padding: 17px; }
+    .list-heading { align-items: flex-start; flex-direction: column; padding: 20px; }
+    .report-add-btn { align-self: stretch; }
+    .report-table th, .report-table td { padding: 14px 16px; }
+}
+
+@media (max-width: 420px) {
+    .report-page { width: calc(100% - 22px); }
+    .report-header p { font-size: .86rem; }
+    .report-table { min-width: 520px; }
+}
+
+</style>
+<main class="report-page">
+    <section class="report-header">
+        <div>
+            <span class="report-eyebrow">Hakim Find / Dashboard</span>
+            <h1>گزارش آیتم‌ها</h1>
+            <p>نمای کلی از آیتم‌های ثبت‌شده و وضعیت رسیدگی به آن‌ها</p>
+        </div>
+        {% if state.count == 0 %}
+            <a class="report-primary-btn" href="{% url 'create_item' %}">
+                <span aria-hidden="true">＋</span>
+                ثبت آیتم جدید
+            </a>
+        {% endif %}
+    </section>
+
+    <section class="report-stats" aria-label="آمار آیتم‌ها">
+        <article class="stat-card stat-total">
+            <div class="stat-icon" aria-hidden="true">▤</div>
+            <div>
+                <span class="stat-label">کل آیتم‌های ثبت‌شده</span>
+                <strong class="stat-number">{{ item.count }}</strong>
+            </div>
+        </article>
+        <article class="stat-card stat-open">
+            <div class="stat-icon" aria-hidden="true">◷</div>
+            <div>
+                <span class="stat-label">آیتم‌های باز</span>
+                <strong class="stat-number">{{ state.opened }}</strong>
+            </div>
+        </article>
+        <article class="stat-card stat-closed">
+            <div class="stat-icon" aria-hidden="true">✓</div>
+            <div>
+                <span class="stat-label">آیتم‌های بسته‌شده</span>
+                <strong class="stat-number">{{ state.closed }}</strong>
+            </div>
+        </article>
+    </section>
+
+    <section class="report-list-section">
+        <div class="list-heading">
+            <div>
+                <h2>فهرست آیتم‌ها</h2>
+                <p>مدیریت و بررسی آیتم‌های ثبت‌شده</p>
+            </div>
+            {% if state.count != 0 %}
+                <a class="report-primary-btn report-add-btn" href="{% url 'create_item' %}">
+                    <span aria-hidden="true">＋</span>
+                    ثبت آیتم جدید
+                </a>
+            {% endif %}
+        </div>
+
+        {% if item %}
+            <div class="report-table-wrap">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">عنوان آیتم</th>
+                            <th scope="col">وضعیت</th>
+                            <th scope="col">عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in item %}
+                            <tr>
+                                <td class="item-title-cell">{{ i.title }}</td>
+                                <td>
+                                    <span class="status-badge status-{{ i.status|slugify }}">{{ i.status }}</span>
+                                </td>
+                                <td>
+                                    <div class="item-actions">
+                                        <a class="action-link edit-link" href="{% url 'update_item' i.pk %}">ویرایش</a>
+                                        <a class="action-link delete-link" href="{% url 'delete_item' i.pk %}">حذف</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="report-empty-state">
+                <div class="empty-icon" aria-hidden="true">▤</div>
+                <h3>هنوز آیتمی ثبت نشده است</h3>
+                <p>برای شروع، اولین آیتم را در سامانه ثبت کنید.</p>
+                <a class="report-primary-btn" href="{% url 'create_item' %}">ثبت اولین آیتم</a>
+            </div>
+        {% endif %}
+    </section>
+</main>
+{% endblock %}

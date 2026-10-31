@@ -28,10 +28,11 @@
                 <a class="nav-link" href="{% url 'home' %}">صفحه اصلی</a>
                 <a class="nav-link" href="{% url 'list_item' %}">جست‌وجوی گمشده‌ها</a>
                 <a class="nav-link" href="{% url 'register' %}">ثبت‌نام</a>
+
                 {% if not user.is_authenticated %}
-                <a class="nav-login" href="{% url 'login' %}">ورود به حساب <span aria-hidden="true">←</span></a>
+                    <a class="nav-login" href="{% url 'login' %}">ورود به حساب <span aria-hidden="true">←</span></a>
                 {% else %}
-                <a class="nav-login" href="{% url 'home' %}">خروج<span aria-hidden="true">←</span></a>
+                    <a class="nav-login" href="{% url 'home' %}">خروج<span aria-hidden="true">←</span></a>
                 {% endif %}
             </nav>
         </div>
