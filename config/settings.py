@@ -152,3 +152,5 @@ ALLOWED_HOSTS = ['hakimfind.onrender.com']
 CSRF_TRUSTED_ORIGINS = [
     'https://hakimfind.onrender.com',
 ]
+
+SECURE_HSTS_SECONDS = 3600
