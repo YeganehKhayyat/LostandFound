@@ -137,3 +137,9 @@ MAILERS = {
 
 LOGIN_REDIRECT_URL = 'list_item'
 LOGOUT_REDIRECT_URL = "login"
+
+
+ALLOWED_HOSTS = ['lostandfound-jbkh.onrender.com']
+CSRF_TRUSTED_ORIGINS = [
+    'https://lostandfound-jbkh.onrender.com',
+]
