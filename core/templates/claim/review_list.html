@@ -1,47 +1,367 @@
+{% extends 'base.html' %}
+{% block title %}درخواست‌های مالکیت | حکیم فایند{% endblock %}
 
+{% block content %}
+<style>
+    /* Hakim Find — ownership claims review */
+    .review-page {
+        --g: #1f6b52;
+        --gd: #174d3d;
+        --ink: #20312b;
+        --muted: #718078;
+        --border: #e0e9e3;
+        width: min(1050px, calc(100% - 32px));
+        margin: 32px auto 60px;
+        color: var(--ink);
+        direction: rtl
+    }
 
-{% block title %}
-لیست درخواست های مالکیت آیتم ها
-{% endblock %}
+    .review-page *,
+    .review-page *:before,
+    .review-page *:after {
+        box-sizing: border-box
+    }
 
-{% block content%}
-{% if claims %}
-    {% for claim in claims %}
-        <div>
-            <h3> {{claim.item.title}} </h3>
-            <p>
-                درخواست دهنده:
-                {{claim.claimant.username}}
-            </p>
-            <p>
-                متن اثبات مالکیت:
-                {{claim.proof_text}}
-            </p>
-            <p>
-                تاریخ ثبت:
-                {{claim.created_at}}
+    .review-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 18px;
+        margin-bottom: 23px
+    }
 
-            </p>
-        {% if claim.status == 'pending' %}
-        <form method="post"  action="{% url 'approve_reject_claim' claim.id %}">
-            <input type="hidden" value="approve"  name="status"/>
-            {% csrf_token%}
-            <button type="submit">تایید</button>
-        </form>
-        {% endif %}
-        {% if claim.status == 'pending'%}
-        <form method="post" action="{% url 'approve_reject_claim' claim.id %}">
-            {% csrf_token%}
-            <input type="hidden" value="reject" name="status"/>
-            <button type="submit">رد</button>
-        </form>
-        {% else %}
-        <p>
-            درخواستی برای ثبت وجود ندارد
-        </p>
-        {% endif %}
-        </div>
-        <hr/>
-    {% endfor %}
-{% endif %}
+    .review-eyebrow {
+        margin: 0 0 5px;
+        color: var(--g);
+        font-size: .82rem;
+        font-weight: 800
+    }
+
+    .review-header h1 {
+        margin: 0;
+        font-size: clamp(1.5rem, 3vw, 2rem);
+        line-height: 1.5
+    }
+
+    .review-subtitle {
+        margin: 7px 0 0;
+        color: var(--muted);
+        font-size: .9rem;
+        line-height: 1.9
+    }
+
+    .review-back-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 9px 14px;
+        border: 1px solid #d9e6dd;
+        border-radius: 11px;
+        background: #f7faf7;
+        color: var(--gd);
+        font-size: .84rem;
+        font-weight: 800;
+        text-decoration: none
+    }
+
+    .review-back-link:hover {
+        border-color: #b6d2c0;
+        background: #edf7f0
+    }
+
+    .review-summary {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: fit-content;
+        margin-bottom: 17px;
+        padding: 9px 13px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: #fff;
+        color: #5f7066;
+        font-size: .84rem
+    }
+
+    .review-summary-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #55a477
+    }
+
+    .review-summary strong {
+        color: var(--gd);
+        font-variant-numeric: tabular-nums
+    }
+
+    .review-list {
+        display: grid;
+        gap: 16px
+    }
+
+    .review-card {
+        min-width: 0;
+        padding: clamp(18px, 3vw, 25px);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 12px 32px rgba(30, 64, 48, .05)
+    }
+
+    .review-card-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding-bottom: 17px;
+        border-bottom: 1px solid #edf2ee
+    }
+
+    .review-item-label {
+        color: var(--g);
+        font-size: .76rem;
+        font-weight: 800
+    }
+
+    .review-card-top h2 {
+        margin: 4px 0 0;
+        font-size: 1.12rem;
+        line-height: 1.7;
+        overflow-wrap: anywhere
+    }
+
+    .review-status {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        padding: 6px 11px;
+        border-radius: 999px;
+        background: #eef2ef;
+        color: #59685f;
+        font-size: .78rem;
+        font-weight: 800
+    }
+
+    .review-status--pending {
+        background: #fff4d9;
+        color: #875d08
+    }
+
+    .review-status--approved {
+        background: #e7f6ec;
+        color: #217044
+    }
+
+    .review-status--rejected {
+        background: #fff0ee;
+        color: #a33a32
+    }
+
+    .review-meta {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        padding: 17px 0
+    }
+
+    .review-meta-item {
+        display: grid;
+        gap: 5px;
+        min-width: 0
+    }
+
+    .review-meta-item span {
+        color: var(--muted);
+        font-size: .77rem
+    }
+
+    .review-meta-item strong {
+        color: #34483e;
+        font-size: .88rem;
+        overflow-wrap: anywhere
+    }
+
+    .review-proof {
+        padding: 15px 16px;
+        border-right: 3px solid #80ad8e;
+        border-radius: 10px;
+        background: #f6faf7
+    }
+
+    .review-proof h3 {
+        margin: 0 0 7px;
+        color: #385344;
+        font-size: .88rem
+    }
+
+    .review-proof p {
+        margin: 0;
+        color: #52645a;
+        font-size: .88rem;
+        line-height: 2;
+        overflow-wrap: anywhere
+    }
+
+    .review-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 18px
+    }
+
+    .review-actions form {
+        margin: 0
+    }
+
+    .review-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 9px 15px;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        font: inherit;
+        font-size: .84rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: background .15s, transform .15s
+    }
+
+    .review-button:hover {
+        transform: translateY(-1px)
+    }
+
+    .review-button--approve {
+        border-color: var(--g);
+        background: var(--g);
+        color: #fff
+    }
+
+    .review-button--approve:hover {
+        background: var(--gd)
+    }
+
+    .review-button--reject {
+        border-color: #f0d4d1;
+        background: #fff6f5;
+        color: #a33a32
+    }
+
+    .review-button--reject:hover {
+        background: #ffedeb
+    }
+
+    .review-processed-note {
+        margin: 16px 0 0;
+        color: var(--muted);
+        font-size: .82rem
+    }
+
+    .review-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 48px 22px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: #fff;
+        text-align: center;
+        box-shadow: 0 12px 32px rgba(30, 64, 48, .045)
+    }
+
+    .review-empty-icon {
+        display: grid;
+        place-items: center;
+        width: 58px;
+        height: 58px;
+        margin-bottom: 14px;
+        border-radius: 18px;
+        background: #eaf5ed;
+        color: var(--g);
+        font-size: 1.6rem;
+        font-weight: 900
+    }
+
+    .review-empty h2 {
+        margin: 0;
+        font-size: 1.1rem
+    }
+
+    .review-empty p {
+        margin: 8px 0 18px;
+        color: var(--muted);
+        font-size: .88rem;
+        line-height: 1.9
+    }
+
+    @media(max-width:560px) {
+        .review-page {
+            width: calc(100% - 22px);
+            margin-top: 21px
+        }
+
+        .review-header {
+            align-items: stretch;
+            flex-direction: column
+        }
+
+        .review-header .review-back-link {
+            width: 100%
+        }
+
+        .review-meta {
+            grid-template-columns: 1fr
+        }
+
+        .review-actions {
+            flex-direction: column
+        }
+
+        .review-actions form,
+        .review-button {
+            width: 100%
+        }
+    }
+</style>
+
+<section class="review-page" dir="rtl">
+  <header class="review-header">
+    <div><p class="review-eyebrow">مدیریت درخواست‌ها</p><h1>درخواست‌های مالکیت</h1><p class="review-subtitle">درخواست‌های ثبت‌شده را بررسی کن و نتیجه را مشخص کن.</p></div>
+    <a class="review-back-link" href="/item/list">بازگشت به فهرست آیتم‌ها</a>
+  </header>
+  {% if claims %}
+    <div class="review-summary"><span class="review-summary-dot"></span><span>تعداد درخواست‌ها:</span><strong>{{ claims|length }}</strong></div>
+    <div class="review-list">
+      {% for claim in claims %}
+        <article class="review-card">
+          <div class="review-card-top"><div><span class="review-item-label">آیتم موردنظر</span><h2>{{ claim.item.title }}</h2></div>
+            {% if claim.status == 'pending' %}<span class="review-status review-status--pending">در انتظار بررسی</span>
+            {% elif claim.status == 'approved' %}<span class="review-status review-status--approved">تأیید شده</span>
+            {% elif claim.status == 'rejected' %}<span class="review-status review-status--rejected">رد شده</span>
+            {% else %}<span class="review-status">{{ claim.get_status_display|default:claim.status }}</span>{% endif %}
+          </div>
+          <div class="review-meta">
+            <div class="review-meta-item"><span>درخواست‌دهنده</span><strong>{{ claim.claimant.username }}</strong></div>
+            <div class="review-meta-item"><span>تاریخ ثبت</span><strong>{{ claim.created_at|date:"Y/m/d - H:i" }}</strong></div>
+          </div>
+          <section class="review-proof"><h3>توضیحات اثبات مالکیت</h3><p>{{ claim.proof_text|linebreaksbr }}</p></section>
+          {% if claim.status == 'pending' %}
+            <div class="review-actions">
+              <form method="post" action="{% url 'approve_reject_claim' claim.id %}">{% csrf_token %}<input type="hidden" name="status" value="approve"><button type="submit" class="review-button review-button--approve">تأیید درخواست</button></form>
+              <form method="post" action="{% url 'approve_reject_claim' claim.id %}">{% csrf_token %}<input type="hidden" name="status" value="reject"><button type="submit" class="review-button review-button--reject">رد درخواست</button></form>
+            </div>
+          {% else %}<p class="review-processed-note">این درخواست قبلاً بررسی شده است.</p>{% endif %}
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="review-empty"><div class="review-empty-icon">✓</div><h2>درخواستی برای بررسی وجود ندارد</h2><p>در حال حاضر هیچ درخواست مالکیتی ثبت نشده است.</p><a class="review-back-link" href="/item/list">مشاهده آیتم‌ها</a></div>
+  {% endif %}
+</section>
 {% endblock %}
