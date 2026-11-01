@@ -23,8 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-(rez#3%(sb!^dmyd*nx5@-mwamapyv&-xab7a_%m5&z)eocx(('
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
+DEBUG = True
 ALLOWED_HOSTS = []
 
 
@@ -148,7 +147,7 @@ LOGIN_REDIRECT_URL = 'list_item'
 LOGOUT_REDIRECT_URL = "login"
 
 
-ALLOWED_HOSTS = ['hakimfind.onrender.com']
+ALLOWED_HOSTS = ['hakimfind.onrender.com' , 'localhost' , '127.0.0.1' , '0.0.0.0']
 CSRF_TRUSTED_ORIGINS = [
     'https://hakimfind.onrender.com',
 ]
